@@ -1,7 +1,9 @@
 import {
+    Body,
     Controller,
     Get,
     Param,
+    Post,
     UseGuards,
 } from '@nestjs/common';
 
@@ -15,16 +17,39 @@ import {
 
 import { AuthGuard } from '../auth/auth.guard.js';
 import { TenantGuard } from '../common/guards/tenant.guard.js';
+import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 
 import { TenantsService } from './tenants.service.js';
+import { OnboardTenantDto } from './dto/onboard-tenant.dto.js';
 
-@ApiTags('Tenants')
+@ApiTags('Tenants & Onboarding')
 @ApiBearerAuth()
 @Controller('tenants')
 export class TenantsController {
     constructor(
         private readonly tenantsService: TenantsService,
     ) { }
+
+    @Get('my-tenants')
+    @UseGuards(AuthGuard)
+    @ApiOperation({ summary: 'List all restaurant workspaces the authenticated user belongs to' })
+    @ApiResponse({ status: 200, description: 'List of user businesses with their assigned role' })
+    async getMyTenants(
+        @CurrentUser() user: any,
+    ) {
+        return this.tenantsService.getUserTenants(user.uid);
+    }
+
+    @Post()
+    @UseGuards(AuthGuard)
+    @ApiOperation({ summary: 'Create a new restaurant workspace with plan selection & trial provisioning' })
+    @ApiResponse({ status: 201, description: 'Workspace, Owner Membership, and Trial Subscription created' })
+    async createTenant(
+        @CurrentUser() user: any,
+        @Body() dto: OnboardTenantDto,
+    ) {
+        return this.tenantsService.onboard(user.uid, user.email || '', dto);
+    }
 
     @Get(':id')
     @UseGuards(AuthGuard, TenantGuard)

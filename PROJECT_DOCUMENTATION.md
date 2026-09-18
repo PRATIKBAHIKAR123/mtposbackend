@@ -205,7 +205,25 @@ Protected by `AuthGuard` + `SystemAdminGuard`.
 | `PATCH`| `/api/v1/system-admin/plans/:id` | `PlansService` | Update subscription plan |
 | `GET` | `/api/v1/system-admin/features` | `PermissionsService` | Catalog of SaaS feature flags |
 
-## 5.3 Tenant POS APIs (`/api/v1/*`)
+## 5.3 Workspace Onboarding, Subscriptions & Memberships (`/api/v1/*`)
+Protected by `AuthGuard` (and `TenantGuard` where tenant-scoped).
+
+| Domain Module | Method | Endpoint | Description | Guard |
+|---|---|---|---|---|
+| **Tenants** | `GET` | `/api/v1/tenants/my-tenants` | List all businesses authenticated user belongs to | `AuthGuard` |
+| | `POST` | `/api/v1/tenants` | Self-serve onboarding: create tenant, roles, owner membership & trial | `AuthGuard` |
+| | `GET` | `/api/v1/tenants/:id` | Get restaurant details | `AuthGuard` + `TenantGuard` |
+| **Plans** | `GET` | `/api/v1/plans` | Public catalog of subscription plans and tiers | Public |
+| | `GET` | `/api/v1/plans/:id` | Plan details | Public |
+| **Subscriptions** | `GET` | `/api/v1/subscriptions/active` | Get active subscription & trial days remaining | `AuthGuard` + `TenantGuard` |
+| | `POST` | `/api/v1/subscriptions/select-plan` | Upgrade / change subscription plan | `AuthGuard` + `TenantGuard` |
+| **Memberships** | `GET` | `/api/v1/memberships` | List restaurant staff team members | `AuthGuard` + `TenantGuard` |
+| | `POST` | `/api/v1/memberships` | Add staff member to restaurant | `AuthGuard` + `TenantGuard` |
+| | `PATCH`| `/api/v1/memberships/:userId/role` | Update staff member role | `AuthGuard` + `TenantGuard` |
+| | `PATCH`| `/api/v1/memberships/:userId/status` | Suspend or activate staff member | `AuthGuard` + `TenantGuard` |
+| | `DELETE`| `/api/v1/memberships/:userId` | Remove staff member | `AuthGuard` + `TenantGuard` |
+
+## 5.4 Tenant POS APIs (`/api/v1/*`)
 Protected by `AuthGuard` + `TenantGuard` with `x-tenant-id` header or URL parameter.
 
 | Domain Module | Method | Endpoint | Description |

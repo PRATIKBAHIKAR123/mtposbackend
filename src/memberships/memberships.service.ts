@@ -160,4 +160,14 @@ export class MembershipsService {
             ...updated.data(),
         } as Membership;
     }
+
+    async delete(tenantId: string, userId: string): Promise<{ success: boolean; userId: string }> {
+        const ref = this.getCollection(tenantId).doc(userId);
+        const snapshot = await ref.get();
+        if (!snapshot.exists) {
+            throw new NotFoundException('Membership not found');
+        }
+        await ref.delete();
+        return { success: true, userId };
+    }
 }
