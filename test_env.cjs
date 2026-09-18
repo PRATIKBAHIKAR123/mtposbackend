@@ -1,0 +1,10 @@
+require('dotenv').config();
+const rawKey = process.env.FIREBASE_PRIVATE_KEY;
+console.log('Raw string length:', rawKey ? rawKey.length : 0);
+console.log('StartsWith quote?', rawKey.startsWith('"'));
+console.log('EndsWith quote?', rawKey.endsWith('"'));
+console.log('Has literal \\n?', rawKey.includes('\\n'));
+console.log('Has real newline?', rawKey.includes('\n'));
+const replaced = rawKey.replace(/\\n/g, '\n');
+console.log('Replaced startsWith quote?', replaced.startsWith('"'));
+console.log('Replaced endsWith quote?', replaced.endsWith('"'));
